@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SongSearch.Models;
-using System.Runtime.CompilerServices;
 
 public class SongSearchDbContext : DbContext
 {
@@ -63,6 +62,5 @@ public class SongSearchDbContext : DbContext
             new Genre { GenreId = 406, Description = "Alternative Folk"}
         });
     }
-   
 }
 
