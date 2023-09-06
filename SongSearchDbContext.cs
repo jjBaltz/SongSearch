@@ -52,7 +52,7 @@ public class SongSearchDbContext : DbContext
             new Song_Genre { Song_GenreId = 310, GenreId = 404, SongId = 2010}
         });
     
-        modelBuilder.Entity<Genre>().HasData(new Genre []
+        modelBuilder.Entity<Genre>().HasData(new Genre[]
         {
             new Genre { GenreId = 401, Description = "Alternative Rock"},
             new Genre { GenreId = 402, Description = "Screamo"},
@@ -63,4 +63,3 @@ public class SongSearchDbContext : DbContext
         });
     }
 }
-
