@@ -77,7 +77,9 @@ app.MapGet("/api/artists", (SongSearchDbContext db) =>
 
 app.MapGet("/api/artists/{id}", (SongSearchDbContext db, int id) =>
 {
-    return db.Artists.Single(a => a.ArtistId == id);
+    return db.Artists
+        .Include(a => a.Songs)
+        .Single(a => a.ArtistId == id);
 });
 
 
