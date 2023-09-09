@@ -139,5 +139,57 @@ app.MapGet("/api/songs/{id}", (SongSearchDbContext db, int id) =>
         .Single(song => song.SongId == id);
 });
 
+//GENRE ENDPOINTS
+app.MapPost("/api/genres", (SongSearchDbContext db, Genre genre) =>
+{
+    try
+    {
+        db.Genres.Add(genre);
+        db.SaveChanges();
+        return Results.Created($"/api/genres/{genre.GenreId}", genre);
+    }
+    catch (DbUpdateException)
+    {
+        return Results.NotFound();
+    }
+});
+
+app.MapDelete("/api/genres/{id}", (SongSearchDbContext db, int id) =>
+{
+    Genre genre = db.Genres.SingleOrDefault(genre => genre.GenreId == id);
+    if (genre == null)
+    {
+        return Results.NotFound();
+    }
+    db.Genres.Remove(genre);
+    db.SaveChanges();
+    return Results.NoContent();
+});
+
+app.MapPut("/api/genres/{id}", (SongSearchDbContext db, int id, Genre genre) =>
+{
+    Genre genreToUpdate = db.Genres.SingleOrDefault(genre => genre.GenreId == id);
+    if (genreToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+    genreToUpdate.Description = genre.Description;
+
+    db.Update(genreToUpdate);
+    db.SaveChanges();
+    return Results.Ok(genreToUpdate);
+});
+
+app.MapGet("/api/genres", (SongSearchDbContext db) =>
+{
+    return db.Genres.ToList();
+});
+
+app.MapGet("/api/genres/{id}", (SongSearchDbContext db, int id) =>
+{
+    return db.Genres
+        .Include(g => g.Songs)
+        .Single(g => g.GenreId == id);
+});
 
 app.Run();
