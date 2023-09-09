@@ -82,5 +82,62 @@ app.MapGet("/api/artists/{id}", (SongSearchDbContext db, int id) =>
         .Single(a => a.ArtistId == id);
 });
 
+//SONGS ENDPOINTS
+app.MapPost("/api/songs", (SongSearchDbContext db, Song song) =>
+{
+    try
+    {
+        db.Songs.Add(song);
+        db.SaveChanges();
+        return Results.Created($"/api/songs/{song.SongId}", song);
+    }
+    catch (DbUpdateException)
+    {
+        return Results.NotFound();
+    }
+});
+
+app.MapDelete("/api/songs/{id}", (SongSearchDbContext db, int id) =>
+{
+    Song song = db.Songs.SingleOrDefault(song => song.SongId == id);
+    if (song == null)
+    {
+        return Results.NotFound();
+    }
+    db.Songs.Remove(song);
+    db.SaveChanges();
+    return Results.NoContent();
+});
+
+app.MapPut("/api/songs/{id}", (SongSearchDbContext db, int id, Song song) =>
+{
+    Song songToUpdate = db.Songs.SingleOrDefault(song => song.SongId == id);
+    if (songToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+    songToUpdate.Title = song.Title;
+    songToUpdate.Album = song.Album;
+    songToUpdate.Length = song.Length;
+    songToUpdate.ArtistId = song.ArtistId;
+
+    db.Update(songToUpdate);
+    db.SaveChanges();
+    return Results.Ok(songToUpdate);
+});
+
+app.MapGet("/api/songs", (SongSearchDbContext db) =>
+{
+    return db.Songs.ToList();
+});
+
+app.MapGet("/api/songs/{id}", (SongSearchDbContext db, int id) =>
+{
+    return db.Songs
+        .Include(song => song.Artist)
+        .Include(song => song.Song_Genre)
+        .Single(song => song.SongId == id);
+});
+
 
 app.Run();
